@@ -11,6 +11,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(projects.presentersStates)
+                api(projects.liveKollections)
                 api(projects.koncurrentLaterCoroutines)
             }
         }
