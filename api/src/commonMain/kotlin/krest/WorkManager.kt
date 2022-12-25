@@ -6,7 +6,7 @@ import krest.params.SubmitWorkOptions
 import live.LiveMap
 
 interface WorkManager {
-    fun <P, R> submit(options: SubmitWorkOptions<P>): Result<Worker<P, R>>
+    fun <P> submit(options: SubmitWorkOptions<P>): Result<Worker<P, *>>
 
-    fun liveWorkProgress(scope: String): LiveMap<String, ProgressState>
+    fun liveWorkProgress(type: String, topic: String?): LiveMap<String, ProgressState>
 }

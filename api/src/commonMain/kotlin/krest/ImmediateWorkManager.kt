@@ -6,34 +6,45 @@ import kase.Success
 import kollections.to
 import koncurrent.ProgressState
 import krest.params.SubmitWorkOptions
-import live.LiveMap
-import live.MutableLiveMap
 import live.mutableLiveMapOf
 
 class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
-    private val liveWorkerStateMap = mutableMapOf<String, MutableLiveMap<String, ProgressState>>()
+    private val workerLedger = mutableListOf<WorkerLedger>()
 
-    override fun <P, R> submit(
-        options: SubmitWorkOptions<P>
-    ): Result<Worker<P, R>> {
-        val worker = factory.createWorker<P, R>(options) ?: return noWorkerRegistered(options)
-        val live = liveWorkerStateMap.getOrPut(options.scope) {
-            mutableLiveMapOf(options.name to ProgressState.initial())
-        }
+    override fun <P> submit(options: SubmitWorkOptions<P>): Result<Worker<P, *>> {
+        val worker = factory.createWorker<P, Any?>(options) ?: return noWorkerRegistered(options)
+
+        val entry = ledgerEntryOf(options)
+
         worker.doWork(options.params).onUpdate {
-            live[options.name] = it
+            entry.progress[options.name] = it
         }.then {
-            live.remove(options.name)
+            entry.progress.remove(options.name)
         }
+
         return Success(worker)
     }
 
-    override fun liveWorkProgress(scope: String): LiveMap<String, ProgressState> {
-        return liveWorkerStateMap.getOrPut(scope) { mutableLiveMapOf() }
+    override fun liveWorkProgress(type: String, topic: String?) = ledgerEntryOf(type, topic, null).progress
+
+    private fun ledgerEntryOf(options: SubmitWorkOptions<*>) = ledgerEntryOf(options.type, options.topic, options)
+
+    private fun ledgerEntryOf(
+        type: String,
+        topic: String?,
+        options: SubmitWorkOptions<*>?
+    ): WorkerLedger = workerLedger.firstOrNull {
+        it.topic == topic && it.type == type
+    } ?: WorkerLedger(
+        type = type,
+        topic = topic,
+        progress = if (options != null) mutableLiveMapOf(options.name to ProgressState.initial()) else mutableLiveMapOf()
+    ).also {
+        workerLedger.add(it)
     }
 
-    private fun <P, R> noWorkerRegistered(options: SubmitWorkOptions<*>): Result<Worker<P, R>> {
-        val message = "Failed to create worker ${options.scope}->${options.name}"
+    private fun <P> noWorkerRegistered(options: SubmitWorkOptions<*>): Result<Worker<P, *>> {
+        val message = "Failed to create worker ${options.type}->${options.name}"
         return Failure(IllegalArgumentException(message))
     }
 }
