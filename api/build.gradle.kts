@@ -11,6 +11,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(projects.cacheApi)
+                api(projects.kaseCore)
                 api(projects.presentersStates)
                 api(projects.liveKollections)
                 api(projects.koncurrentLaterCoroutines)

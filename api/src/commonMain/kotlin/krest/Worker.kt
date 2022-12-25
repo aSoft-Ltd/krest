@@ -2,7 +2,6 @@ package krest
 
 import koncurrent.Later
 
-interface Worker<out P, out R> {
-    val params: P
-    fun doWork(): Later<R>
+interface Worker<in P, out R> {
+    fun doWork(params: P): Later<R>
 }
