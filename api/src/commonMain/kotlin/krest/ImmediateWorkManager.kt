@@ -1,10 +1,12 @@
 package krest
 
 import kase.Failure
+import kase.Pending
+import kase.ProgressState
 import kase.Result
 import kase.Success
+import kollections.iListOf
 import kollections.to
-import koncurrent.ProgressState
 import krest.params.SubmitWorkOptions
 import live.mutableLiveMapOf
 
@@ -38,13 +40,13 @@ class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
     } ?: WorkerLedger(
         type = type,
         topic = topic,
-        progress = if (options != null) mutableLiveMapOf(options.name to ProgressState.initial()) else mutableLiveMapOf()
+        progress = if (options != null) mutableLiveMapOf(options.name to Pending) else mutableLiveMapOf()
     ).also {
         workerLedger.add(it)
     }
 
     private fun <P> noWorkerRegistered(options: SubmitWorkOptions<*>): Result<Worker<P, *>> {
         val message = "Failed to create worker ${options.type}->${options.name}"
-        return Failure(IllegalArgumentException(message))
+        return Failure(IllegalArgumentException(message), actions = iListOf())
     }
 }
