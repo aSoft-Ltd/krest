@@ -2,7 +2,6 @@ package krest
 
 import kase.Failure
 import kase.Pending
-import kase.ProgressState
 import kase.Result
 import kase.Success
 import kollections.iListOf
