@@ -12,7 +12,7 @@ import live.mutableLiveMapOf
 class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
     private val workerLedger = mutableListOf<WorkerLedger>()
 
-    override fun <P> submit(options: SubmitWorkOptions<P>): Result<Worker<P, *>> {
+    override fun <P> submit(options: SubmitWorkOptions<P>): Result<Worker<P, Any?>> {
         val worker = factory.createWorker<P, Any?>(options) ?: return noWorkerRegistered(options)
 
         val entry = ledgerEntryOf(options)
@@ -28,12 +28,12 @@ class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
 
     override fun liveWorkProgress(type: String, topic: String?) = ledgerEntryOf(type, topic, null).progress
 
-    private fun ledgerEntryOf(options: SubmitWorkOptions<*>) = ledgerEntryOf(options.type, options.topic, options)
+    private fun ledgerEntryOf(options: SubmitWorkOptions<Any?>) = ledgerEntryOf(options.type, options.topic, options)
 
     private fun ledgerEntryOf(
         type: String,
         topic: String?,
-        options: SubmitWorkOptions<*>?
+        options: SubmitWorkOptions<Any?>?
     ): WorkerLedger = workerLedger.firstOrNull {
         it.topic == topic && it.type == type
     } ?: WorkerLedger(
@@ -44,7 +44,7 @@ class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
         workerLedger.add(it)
     }
 
-    private fun <P> noWorkerRegistered(options: SubmitWorkOptions<*>): Result<Worker<P, *>> {
+    private fun <P> noWorkerRegistered(options: SubmitWorkOptions<Any?>): Result<Worker<P, Any?>> {
         val message = "Failed to create worker ${options.type}->${options.name}"
         return Failure(IllegalArgumentException(message), actions = iListOf())
     }

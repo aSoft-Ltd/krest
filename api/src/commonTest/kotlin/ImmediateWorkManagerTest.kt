@@ -44,6 +44,6 @@ class ImmediateWorkManagerTest {
         )
 
         val res = manager.submit(options)
-        expect(res).toBe<Success<*>>()
+        expect(res).toBe<Success<Any?>>()
     }
 }
