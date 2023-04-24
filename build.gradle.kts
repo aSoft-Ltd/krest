@@ -31,6 +31,7 @@ subprojects {
     apply(plugin = "com.vanniktech.maven.publish")
 
     val p = this
+    version = v
 
     configure<MavenPublishBaseExtension> {
         publishToMavenCentral(SonatypeHost.DEFAULT,automaticRelease = true)
