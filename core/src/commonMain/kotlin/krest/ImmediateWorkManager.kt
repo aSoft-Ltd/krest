@@ -7,7 +7,7 @@ import kase.Success
 import kollections.iListOf
 import kollections.to
 import krest.params.SubmitWorkOptions
-import live.mutableLiveMapOf
+import cinematic.mutableLiveMapOf
 
 class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
     private val workerLedger = mutableListOf<WorkerLedger>()

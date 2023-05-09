@@ -3,7 +3,7 @@ package krest
 import kase.ExecutorState
 import kase.Result
 import krest.params.SubmitWorkOptions
-import live.LiveMap
+import cinematic.LiveMap
 
 interface WorkManager {
     fun <P> submit(options: SubmitWorkOptions<P>): Result<Worker<P, Any?>>
