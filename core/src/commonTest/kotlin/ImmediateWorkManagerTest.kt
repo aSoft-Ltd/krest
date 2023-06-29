@@ -1,7 +1,9 @@
 import expect.expect
 import expect.toBe
 import kase.Failure
+import kase.Result
 import kase.Success
+import kommander.expect
 import koncurrent.Later
 import koncurrent.SuccessfulLater
 import krest.ImmediateWorkManager
@@ -45,6 +47,6 @@ class ImmediateWorkManagerTest {
         )
 
         val res = manager.submit(options)
-        expect(res).toBe<Success<Any?>>()
+        expect<Result<Worker<Unit, Any?>>>(res).toBe<Success<Any?>>()
     }
 }
