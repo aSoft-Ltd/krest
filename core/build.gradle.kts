@@ -19,15 +19,15 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(projects.keepApi)
-                api(projects.kaseCore)
+                api(libs.kase.core)
                 api(projects.cinematicLiveKollections)
-                api(projects.koncurrentLaterCoroutines)
+                api(libs.koncurrent.later.coroutines)
             }
         }
 
         val commonTest by getting {
             dependencies {
-                api(projects.koncurrentLaterTest)
+                api(libs.koncurrent.later.test)
                 api(libs.kommander.coroutines)
             }
         }
