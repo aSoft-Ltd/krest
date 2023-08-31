@@ -28,7 +28,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 api(projects.koncurrentLaterTest)
-                api(projects.kommanderCoroutines)
+                api(libs.kommander.coroutines)
             }
         }
     }
