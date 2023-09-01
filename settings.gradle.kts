@@ -1,26 +1,11 @@
+import java.io.File
+
 pluginManagement {
-    enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
-    repositories {
-        google()
-        gradlePluginPortal()
-        mavenCentral()
-    }
-
-    dependencyResolutionManagement {
-        versionCatalogs {
-            file("../versions/gradle/versions").listFiles().map {
-                it.nameWithoutExtension to it.absolutePath
-            }.forEach { (name, path) ->
-                create(name) { from(files(path)) }
-            }
-        }
-    }
+    includeBuild("../build-logic")
 }
 
-fun includeRoot(name: String, path: String) {
-    include(":$name")
-    project(":$name").projectDir = File(path)
+plugins {
+    id("multimodule")
 }
 
 fun includeSubs(base: String, path: String = base, vararg subs: String) {
@@ -30,20 +15,11 @@ fun includeSubs(base: String, path: String = base, vararg subs: String) {
     }
 }
 
+listOf(
+    "cinematic", "keep", "lexi", "captain", "kase",
+    "kollections", "koncurrent", "kommander"
+).forEach { includeBuild("../$it") }
+
 rootProject.name = "krest"
-
-includeBuild("../able")
-includeSubs("functions", "../functions", "core")
-includeSubs("kommander", "../kommander", "core", "coroutines")
-includeSubs("kollections", "../kollections", "atomic", "interoperable")
-includeSubs("koncurrent-executors", "../koncurrent/executors", "core", "coroutines", "mock")
-includeSubs("koncurrent-later", "../koncurrent/later", "core", "coroutines", "test")
-includeSubs("kevlar", "../kevlar", "core")
-includeSubs("kase", "../kase", "core")
-includeSubs("keep", "../keep", "api", "file", "mock", "test")
-includeSubs("lexi", "../lexi", "api", "console")
-includeSubs("lexi-test", "../lexi/test", "android")
-
-includeSubs("cinematic-live", "../cinematic/live", "core", "kollections", "test")
 
 includeSubs("krest", ".", "core")
