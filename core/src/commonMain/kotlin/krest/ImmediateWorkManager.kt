@@ -1,13 +1,12 @@
 package krest
 
+import cinematic.mutableLiveMapOf
 import kase.Failure
 import kase.Pending
 import kase.Result
 import kase.Success
-import kollections.iListOf
 import kollections.to
 import krest.params.SubmitWorkOptions
-import cinematic.mutableLiveMapOf
 
 class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
     private val workerLedger = mutableListOf<WorkerLedger>()
@@ -46,6 +45,6 @@ class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
 
     private fun <P> noWorkerRegistered(options: SubmitWorkOptions<Any?>): Result<Worker<P, Any?>> {
         val message = "Failed to create worker ${options.type}->${options.name}"
-        return Failure(IllegalArgumentException(message), actions = iListOf())
+        return Failure(IllegalArgumentException(message))
     }
 }
