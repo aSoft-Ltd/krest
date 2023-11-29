@@ -25,6 +25,10 @@ class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
         return Success(worker)
     }
 
+    override fun hasWorkScheduled(type: String, topic: String?): Boolean = workerLedger.firstOrNull {
+        it.topic == topic && it.type == type
+    } != null
+
     override fun liveWorkProgress(type: String, topic: String?) = ledgerEntryOf(type, topic, null).progress
 
     private fun ledgerEntryOf(options: SubmitWorkOptions<Any?>) = ledgerEntryOf(options.type, options.topic, options)
