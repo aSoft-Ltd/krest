@@ -5,7 +5,6 @@ import kase.Failure
 import kase.Pending
 import kase.Result
 import kase.Success
-import kollections.to
 import krest.params.SubmitWorkOptions
 
 class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
