@@ -5,7 +5,7 @@ package krest
 
 import kase.ExecutorState
 import cinematic.MutableLiveMap
-import kotlin.js.JsExport
+import kotlinx.JsExport
 
 class WorkerLedger(
     val type: String,
