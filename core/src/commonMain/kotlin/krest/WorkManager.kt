@@ -1,14 +1,14 @@
 package krest
 
-import kase.ExecutorState
-import kase.Result
-import krest.params.SubmitWorkOptions
 import cinematic.LiveMap
+import kase.Result
+import kase.progress.ProgressState
+import krest.params.SubmitWorkOptions
 
 interface WorkManager {
     fun <P> submit(options: SubmitWorkOptions<P>): Result<Worker<P, Any?>>
 
     fun hasWorkScheduled(type: String, topic: String?): Boolean
 
-    fun liveWorkProgress(type: String, topic: String?): LiveMap<String, ExecutorState<Any?>>
+    fun liveWorkProgress(type: String, topic: String?): LiveMap<String, ProgressState>
 }

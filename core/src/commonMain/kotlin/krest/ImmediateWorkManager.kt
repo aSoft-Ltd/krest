@@ -5,6 +5,10 @@ import kase.Failure
 import kase.Pending
 import kase.Result
 import kase.Success
+import kase.progress.ProgressState
+import kase.progress.VoidProgressBus
+import koncurrent.later.then
+import koncurrent.onUpdate
 import krest.params.SubmitWorkOptions
 
 class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
@@ -15,7 +19,7 @@ class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
 
         val entry = ledgerEntryOf(options)
 
-        worker.doWork(options.params).onUpdate {
+        worker.doWork(options.params).onUpdate(VoidProgressBus) {
             entry.progress[options.name] = it
         }.then {
             entry.progress.remove(options.name)
@@ -41,7 +45,7 @@ class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
     } ?: WorkerLedger(
         type = type,
         topic = topic,
-        progress = if (options != null) mutableLiveMapOf(options.name to Pending) else mutableLiveMapOf()
+        progress = if (options != null) mutableLiveMapOf(options.name to ProgressState.initial()) else mutableLiveMapOf()
     ).also {
         workerLedger.add(it)
     }
