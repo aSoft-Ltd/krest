@@ -5,6 +5,8 @@ import kase.Failure
 import kase.Pending
 import kase.Result
 import kase.Success
+import kase.progress.Progress
+import kase.progress.ProgressBus
 import kase.progress.ProgressState
 import kase.progress.VoidProgressBus
 import koncurrent.later.then
@@ -19,7 +21,7 @@ class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
 
         val entry = ledgerEntryOf(options)
 
-        worker.doWork(options.params).onUpdate(VoidProgressBus) {
+        worker.doWork(options.params).onUpdate(ProgressBus()) {
             entry.progress[options.name] = it
         }.then {
             entry.progress.remove(options.name)
