@@ -18,7 +18,8 @@ class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
 
         val entry = ledgerEntryOf(options)
 
-        worker.doWork(options.params).onUpdate(ProgressBus()) {
+        val progress = ProgressBus()
+        worker.doWork(options.params, progress).onUpdate(progress) {
             entry.progress[options.name] = it
         }.then {
             entry.progress.remove(options.name)
