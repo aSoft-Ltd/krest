@@ -1,15 +1,9 @@
-import expect.expect
-import expect.toBe
-import kase.Failure
 import kase.Result
 import kase.Success
+import kase.progress.ProgressBus
 import kommander.expect
+import kommander.toBe
 import koncurrent.Later
-import koncurrent.later.then
-import koncurrent.later.andThen
-import koncurrent.later.andZip
-import koncurrent.later.zip
-import koncurrent.later.catch
 import koncurrent.SuccessfulLater
 import krest.ImmediateWorkManager
 import krest.VoidWorkManager
@@ -18,12 +12,11 @@ import krest.Worker
 import krest.WorkerFactory
 import krest.params.SubmitWorkOptions
 import kotlin.test.Test
-import kotlin.test.fail
 
 class ImmediateWorkManagerTest {
 
     class TestWorker : Worker<Any, Any> {
-        override fun doWork(params: Any): Later<Any> {
+        override fun doWork(params: Any, progress: ProgressBus): Later<Any> {
             println("Working with params: P")
             return SuccessfulLater(Unit)
         }
