@@ -2,8 +2,8 @@ package krest
 
 import kotlin.reflect.KClass
 
-class TaskSubmitOptions<P, T : Task<P>>(
-    val task: KClass<T>,
-    val params: P,
-    val name: String? = null
-)
+open class TaskSubmitOptions<P, out T : Task<P>>(
+    override val task: KClass<out T>,
+    open val params: P,
+    override val name: String? = null
+) : TaskIdentity<T>

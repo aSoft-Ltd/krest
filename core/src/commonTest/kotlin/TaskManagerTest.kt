@@ -1,4 +1,3 @@
-import kase.progress.Progress
 import kommander.expect
 import koncurrent.Later
 import koncurrent.later
@@ -8,11 +7,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
+import krest.LinearProgressTask
 import krest.Task
 import krest.TaskManager
 import krest.TaskSubmitOptions
+import krest.named
 import krest.register
-import kotlin.math.round
+import krest.toSubmitOptions
+import status.Progress
 import kotlin.test.Test
 
 class TaskManagerTest {
@@ -33,32 +35,17 @@ class TaskManagerTest {
         tasks.submit(options)
     }
 
-    class ProgressData(
-        override val done: Long,
-        override val total: Long
-    ) : Progress {
-        override val doneAmountAsDouble: Double
-            get() = TODO("Not yet implemented")
-        override val totalAmountAsDouble: Double
-            get() = TODO("Not yet implemented")
-        override val doneFraction: Double
-            get() = TODO("Not yet implemented")
-        override val remainingFraction: Double
-            get() = TODO("Not yet implemented")
-        override val donePercentage: Double get() = round((done.toDouble() / total.toDouble()) * 100)
-        override val remainingPercentage: Double get() = 100.0 - donePercentage
-    }
-
     class AsyncConsolePrinterTask(
         private val scope: CoroutineScope,
         private val duration: Long
-    ) : Task<Person>() {
+    ) : LinearProgressTask<Person,Double>() {
+
         override fun execute(params: Person): Later<Unit> = scope.later(context = Dispatchers.Default) {
             var passed = 0L
             while (passed < duration) {
                 delay(1000)
                 passed += 1000
-                update(ProgressData(passed, duration))
+                update(Progress(passed.toDouble(), duration.toDouble()))
             }
             println("Hello ${params.name}").toLater()
         }
@@ -126,10 +113,10 @@ class TaskManagerTest {
     fun should_be_able_to_observe_task_progress() = runTest {
         val tasks = TaskManager()
         tasks.register { AsyncConsolePrinterTask(this, 8500) }
-        val options = TaskSubmitOptions(AsyncConsolePrinterTask::class, Person("John Doe"), name = "John Doe")
+        val options = AsyncConsolePrinterTask::class.named("John Doe").toSubmitOptions(Person("John Doe"))
         tasks.submit(options)
         val watcher = tasks.watch(options) {
-            println("Progress: ${it.donePercentage}")
+            println("Progress: ${it.percentage.done}")
         }
         withContext(Dispatchers.Default) { delay(7000) }
         watcher?.stop()

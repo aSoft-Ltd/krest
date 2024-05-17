@@ -20,6 +20,7 @@ kotlin {
             dependencies {
                 api(libs.keep.api)
                 api(libs.kase.core)
+                api(libs.status.core)
                 api(libs.cinematic.live.kollections)
                 api(libs.koncurrent.later.coroutines)
             }
