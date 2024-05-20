@@ -24,6 +24,12 @@ interface TaskRunner {
 
 
     /**
+     * Registers a listener to be invoked when the task is completed
+     */
+    fun onCompleted(options: TaskIdentity<*>, callback: () -> Unit) : Watcher?
+
+
+    /**
      * Watch the progress of a task with the given options.
      *
      * @param callback will be called with the progress of the task.

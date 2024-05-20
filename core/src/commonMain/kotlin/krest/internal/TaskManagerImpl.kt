@@ -36,18 +36,27 @@ internal class TaskManagerImpl : TaskManager {
         val info = TaskInfo(uid = uid, name = options.name ?: uid, task)
         running.add(info)
         try {
-            task.execute(options.params).finally {
-                running.remove(info)
-                (task as? ProgressTask<*, *>)?.removeAllWatchers()
-            }
+            task.execute(options.params).finally { finish(info) }
         } catch (err: Throwable) {
-            running.remove(info)
-            (task as? ProgressTask<*, *>)?.removeAllWatchers()
+            finish(info)
         }
+    }
+
+    private fun finish(info: TaskInfo) {
+        running.remove(info)
+        val task = info.task
+        (task as? ProgressTask<*, *>)?.removeAllWatchers()
+        task.completers.forEach { (it as? Task<*>.TaskCompletionWatcher)?.callback?.invoke() }
+        task.completers.clear()
     }
 
     override fun find(options: TaskIdentity<*>): TaskInfo? = running.find {
         it.task::class == options.task && it.name == options.name
+    }
+
+    override fun onCompleted(options: TaskIdentity<*>, callback: () -> Unit): Watcher? {
+        val task = find(options)?.task ?: return null
+        return task.addCompletionHandler(callback)
     }
 
     override fun isRunning(options: TaskIdentity<*>): Boolean = find(options) != null
