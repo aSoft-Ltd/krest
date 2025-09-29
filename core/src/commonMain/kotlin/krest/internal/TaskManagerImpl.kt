@@ -1,7 +1,7 @@
 package krest.internal
 
 import cinematic.Watcher
-import koncurrent.later.finally
+import koncurrent.awaited.finally
 import krest.LinearProgressTask
 import krest.LinearProgressTaskIdentity
 import krest.ProgressTask

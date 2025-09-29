@@ -6,7 +6,7 @@ import kase.Result
 import kase.Success
 import kase.progress.ProgressBus
 import kase.progress.ProgressState
-import koncurrent.later.then
+import koncurrent.awaited.then
 import koncurrent.onUpdate
 import krest.params.SubmitWorkOptions
 
