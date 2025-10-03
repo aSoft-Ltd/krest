@@ -15,7 +15,6 @@ import krest.named
 import krest.register
 import krest.toSubmitOptions
 import status.Progress
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TaskManagerTest {
@@ -88,7 +87,6 @@ class TaskManagerTest {
     }
 
     @Test
-    @Ignore // This test is flaky, it sometimes passes and sometimes fails on JVM
     fun should_be_able_to_schedule_tasks_conditionally() = runTest {
         val tasks = TaskManager()
         tasks.register { AsyncConsolePrinterTask(this, 2000) }
