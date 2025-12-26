@@ -6,24 +6,23 @@ import kase.Result
 import kase.Success
 import kase.progress.ProgressBus
 import kase.progress.ProgressState
-import koncurrent.awaited.then
-import koncurrent.onUpdate
 import krest.params.SubmitWorkOptions
 
 class ImmediateWorkManager(private val factory: WorkerFactory) : WorkManager {
     private val workerLedger = mutableListOf<WorkerLedger>()
 
-    override fun <P> submit(options: SubmitWorkOptions<P>): Result<Worker<P, Any?>> {
+    override suspend fun <P> submit(options: SubmitWorkOptions<P>): Result<Worker<P, Any?>> {
         val worker = factory.createWorker<P, Any?>(options) ?: return noWorkerRegistered(options)
 
         val entry = ledgerEntryOf(options)
 
         val progress = ProgressBus()
-        worker.doWork(options.params, progress).onUpdate(progress) {
+        progress.onUpdate {
             entry.progress[options.name] = it
-        }.then {
-            entry.progress.remove(options.name)
         }
+        worker.doWork(options.params, progress)
+
+        entry.progress.remove(options.name)
 
         return Success(worker)
     }

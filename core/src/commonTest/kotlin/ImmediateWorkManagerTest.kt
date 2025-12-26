@@ -3,8 +3,7 @@ import kase.Success
 import kase.progress.ProgressBus
 import kommander.expect
 import kommander.toBe
-import koncurrent.Later
-import koncurrent.SuccessfulLater
+import kotlinx.coroutines.test.runTest
 import krest.ImmediateWorkManager
 import krest.VoidWorkManager
 import krest.WorkManager
@@ -16,9 +15,9 @@ import kotlin.test.Test
 class ImmediateWorkManagerTest {
 
     class TestWorker : Worker<Any, Any> {
-        override fun doWork(params: Any, progress: ProgressBus): Later<Any> {
+        override suspend fun doWork(params: Any, progress: ProgressBus): Any {
             println("Working with params: P")
-            return SuccessfulLater(Unit)
+            return Unit
         }
     }
 
@@ -33,7 +32,7 @@ class ImmediateWorkManagerTest {
     }
 
     @Test
-    fun can_submit_a_work() {
+    fun can_submit_a_work() = runTest {
         val manager: WorkManager = ImmediateWorkManager(TestWorkerFactory())
         manager.liveWorkProgress("test", null)
 

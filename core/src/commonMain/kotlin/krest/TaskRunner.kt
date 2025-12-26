@@ -13,7 +13,7 @@ interface TaskRunner {
      *
      * Tasks with no names, will be given a unique name based on their type.
      */
-    fun <P, T : Task<P>> submit(options: TaskSubmitOptions<P, T>)
+    suspend fun <P, T : Task<P>> submit(options: TaskSubmitOptions<P, T>)
 
     /**
      * Check if a task with the given options is running.

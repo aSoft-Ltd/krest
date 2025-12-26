@@ -6,7 +6,7 @@ import kase.progress.ProgressState
 import krest.params.SubmitWorkOptions
 
 interface WorkManager {
-    fun <P> submit(options: SubmitWorkOptions<P>): Result<Worker<P, Any?>>
+    suspend fun <P> submit(options: SubmitWorkOptions<P>): Result<Worker<P, Any?>>
 
     fun hasWorkScheduled(type: String, topic: String?): Boolean
 

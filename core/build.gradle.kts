@@ -18,12 +18,12 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(libs.status.core)
+            api(libs.kase.core)
             api(libs.cinematic.live.kollections)
-            api(libs.koncurrent.later.coroutines)
         }
 
         commonTest.dependencies {
-            api(libs.koncurrent.later.test)
+            api(kotlinx.coroutines.test)
             api(libs.kommander.coroutines)
         }
 

@@ -1,7 +1,6 @@
 package krest
 
 import cinematic.Watcher
-import koncurrent.Later
 
 abstract class Task<in P> {
     internal val completers = mutableListOf<Watcher>()
@@ -20,5 +19,5 @@ abstract class Task<in P> {
         return watcher
     }
 
-    abstract fun execute(params: P): Later<Unit>
+    abstract suspend fun execute(params: P)
 }

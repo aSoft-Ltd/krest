@@ -1,7 +1,6 @@
 package krest.internal
 
 import cinematic.Watcher
-import koncurrent.awaited.finally
 import krest.LinearProgressTask
 import krest.LinearProgressTaskIdentity
 import krest.ProgressTask
@@ -29,14 +28,15 @@ internal class TaskManagerImpl : TaskManager {
         tasks[type] = factory
     }
 
-    override fun <P, T : Task<P>> submit(options: TaskSubmitOptions<P, T>) {
+    override suspend fun <P, T : Task<P>> submit(options: TaskSubmitOptions<P, T>) {
         val factory = tasks[options.task] ?: return
         val task = factory() as Task<P>
         val uid = "${options.task.simpleName}-${counter++}"
         val info = TaskInfo(uid = uid, name = options.name ?: uid, task)
         running.add(info)
         try {
-            task.execute(options.params).finally { finish(info) }
+            task.execute(options.params)
+            finish(info)
         } catch (err: Throwable) {
             finish(info)
         }
